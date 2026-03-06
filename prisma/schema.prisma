@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  hotelId          String           @id @default(uuid())
+  name             String       
+  location         String
+  starRating       Float 
+  phoneNumber      String 
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Room {
+  roomId                 String            @id @default(uuid())
+  roomType               RoomType 
+  pricePerNight          Float 
+  availabilityStatus     RoomStatus     @default(AVAILABLE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Guest {
+  guestId          String            @id @default(uuid())
+  firstName        String
+  lastName         String
+  emailAddress     String         @unique
+  phoneNumber      String 
+  reservations     Reservation[] 
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Reservation {
+  reservationId     String            @id @default(uuid())
+  guestId           String        
+  guest             Guest             @relation(fields: [guestId], references: [guestId], onDelete: Cascade, onUpdate: Cascade)
+  roomId            String
+  checkInDate       Int
+  checkOutDate      Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Payment {
+  paymentId           String            @id @default(uuid())
+  reservationId     String
+  paymentDate       DateTime
+  amount            Float
+  paymentMethod     String 
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Employee {
+  employeeId       String         @id @default(uuid())
+  firstName        String
+  lastName         String
+  position         Position
+  emailAddress     String         @unique
+  phoneNumber      String 
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Service {
+  serviceId        String            @id @default(uuid())
+  hotelId          String            
+  serviceName      String 
+  price            Float
+  description      String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Review {
+  reviewId          String            @id @default(uuid())
+  guestId           String 
+  hotelId           String	
+  rating            Float
+  comment           String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Inventory {
+  inventoryId      String            @id @default(uuid())
+  hotelId          String 
+  itemName         String 
+  quantity         Int 
+  pricePerItem     Float
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model User {
+  id               String        @id @default(uuid())
+  firstName        String
+  lastName         String
+  emailAddress     String        @unique
+  password         String
+  loginAttempts    Int           @default(0)
+  lastLoginAttempt DateTime?
+  role             Role          @default(NORMAL)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now())
+}
+
+enum RoomStatus {
+  RESERVED
+  PENDING 
+  AVAILABLE 
+}
+
+enum Position {
+  MANAGER 
+  RECEPTIONIST 
+  HOUSEKEEPER 
+  SECURITY
+  OTHER
+}
+
+enum RoomType {
+  SINGLE 
+  DOUBLE 
+  SUITE 
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN 
+  NORMAL
+}
