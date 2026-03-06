@@ -2,6 +2,8 @@
 
 **REST API URL:** https://id607001-assessment-rest-api.onrender.com
 
+**Swagger:** https://id607001-assessment-rest-api.onrender.com/api-docs/
+
 # Hotel Management API
 
 A backend RESTful API for a hotel management system.
